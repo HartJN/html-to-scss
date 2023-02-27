@@ -1,5 +1,7 @@
 # PLEASE excuse the code. it was written at 4am.
 
+## Demo: https://nested-scss-generator.netlify.app/
+
 # example inputs:
 
 ## Example 1.
