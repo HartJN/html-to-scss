@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 
 function generateNestedScss(html: string): string {
-  const div = document.createElement('div');
-  div.innerHTML = html;
+  const sanitizedHtml = DOMPurify.sanitize(html);
 
-  const element = div.querySelector('[class], [className]');
-  const tagName = element
-    ? ''
-    : div.querySelector('*')?.tagName.toLowerCase() || '';
+  const container = document.createElement('div');
+  container.innerHTML = sanitizedHtml;
+
+  const element = container.querySelector('[class], [className]');
+  const tagName = container.querySelector('*')?.tagName.toLowerCase() || '';
 
   const firstMatch =
     (
@@ -20,7 +21,9 @@ function generateNestedScss(html: string): string {
 
   const classNames = new Set<string>();
   for (const child of element?.children || []) {
-    const childScss = generateNestedScss(child.outerHTML);
+    const childContainer = document.createElement('div');
+    childContainer.appendChild(child.cloneNode(true));
+    const childScss = generateNestedScss(childContainer.innerHTML);
     if (!classNames.has(childScss)) {
       classNames.add(childScss);
       scss += childScss;
